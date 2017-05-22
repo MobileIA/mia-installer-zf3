@@ -34,6 +34,24 @@ class Table extends Base
         $this->class->setExtendedClass('\MIABase\Table\Base');
     }
     
+    protected function addConfig()
+    {
+        $file = file_get_contents('./module/'.$this->module.'/config/module.config.php');
+        
+        if(stripos($file, "\n            Table" . $this->getFolderNamespace() . "\\" . $this->name . "Table::class => \MIABase\Factory\TableFactory::class,") !== false){
+            return false;
+        }
+        
+        $init = stripos($file, "'service_manager' => [");
+        $init = stripos($file, "'factories' => [", $init);
+        $part1 = substr($file, 0, $init+16);
+        $part2 = substr($file, $init+16);
+        
+        $new = $part1 . "\n            Table" . $this->getFolderNamespace() . "\\" . $this->name . "Table::class => \MIABase\Factory\TableFactory::class," . $part2;
+        
+        file_put_contents('./module/'.$this->module.'/config/module.config.php', $new);
+    }
+    
     public function run()
     {
         // Creamos la clase
@@ -46,5 +64,7 @@ class Table extends Base
         // Guardar
         mkdir('./module/'.$this->module.'/src/Table'. $this->getFolderPath());
         file_put_contents('./module/'.$this->module.'/src/Table'. $this->getFolderPath() .'/'.$this->name.'Table.php', $file->generate());
+        // Agregados el Table al config
+        $this->addConfig();
     }
 }
