@@ -19,8 +19,8 @@ class Adapter extends Base
      * Path del archivo a tener de base
      * @var string
      */
-    protected $filePath = './module/MIAInstaller/data/android/adapter/RecyclerViewAdapter.java';
-    protected $fileXmlPath = './module/MIAInstaller/data/android/adapter/item_adapter.xml';
+    protected $filePath = './vendor/mobileia/mia-installer-zf3/data/android/adapter/RecyclerViewAdapter.java';
+    protected $fileXmlPath = './vendor/mobileia/mia-installer-zf3/data/android/adapter/item_adapter.xml';
     /**
      * Path de la carpeta donde se va a guardar
      * @var string

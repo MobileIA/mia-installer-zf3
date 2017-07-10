@@ -13,8 +13,8 @@ class Add extends \MIAInstaller\Generate\Android\Base
      * Path del archivo a tener de base
      * @var string
      */
-    protected $filePath = './module/MIAInstaller/data/android/activity/Add.java';
-    protected $fileXmlPath = './module/MIAInstaller/data/android/activity/add.xml';
+    protected $filePath = './vendor/mobileia/mia-installer-zf3/data/android/activity/Add.java';
+    protected $fileXmlPath = './vendor/mobileia/mia-installer-zf3/data/android/activity/add.xml';
     /**
      * Path de la carpeta donde se va a guardar
      * @var string

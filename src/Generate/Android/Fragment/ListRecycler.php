@@ -13,8 +13,8 @@ class ListRecycler extends \MIAInstaller\Generate\Android\Base
      * Path del archivo a tener de base
      * @var string
      */
-    protected $filePath = './module/MIAInstaller/data/android/fragment/RecyclerList.java';
-    protected $fileXmlPath = './module/MIAInstaller/data/android/fragment/recycler_list.xml';
+    protected $filePath = './vendor/mobileia/mia-installer-zf3/data/android/fragment/RecyclerList.java';
+    protected $fileXmlPath = './vendor/mobileia/mia-installer-zf3/data/android/fragment/recycler_list.xml';
     /**
      * Path de la carpeta donde se va a guardar
      * @var string
