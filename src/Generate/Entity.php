@@ -17,7 +17,7 @@ class Entity extends Base
     protected function createProperties()
     {
         foreach($this->columns as $column){
-            if($column->field == 'created_at'||$column->field == 'updated_at'){
+            if($column->field == 'created_at'||$column->field == 'updated_at'||$column->field == 'id'){
                 continue;
             }
             
@@ -35,7 +35,7 @@ class Entity extends Base
         
         $body = '$data = parent::toArray();' . "\n";
         foreach($this->columns as $column){
-            if($column->field == 'created_at'||$column->field == 'updated_at'){
+            if($column->field == 'created_at'||$column->field == 'updated_at'||$column->field == 'id'){
                 continue;
             }
             $body .= '$data[\''.$column->field.'\'] = $this->'.$column->field.';' . "\n";
@@ -59,6 +59,9 @@ class Entity extends Base
         
         $body = 'parent::exchangeArray($data);' . "\n";
         foreach($this->columns as $column){
+            if($column->field == 'created_at'||$column->field == 'updated_at'||$column->field == 'id'){
+                continue;
+            }
             $body .= $column->toExchangeArray();
         }
         
@@ -76,6 +79,9 @@ class Entity extends Base
         
         $body = 'parent::exchangeObject($data);' . "\n";
         foreach($this->columns as $column){
+            if($column->field == 'created_at'||$column->field == 'updated_at'||$column->field == 'id'){
+                continue;
+            }
             $body .= $column->toExchangeObject();
         }
         
@@ -98,6 +104,9 @@ class Entity extends Base
         
 $inputFilter = new \Zend\InputFilter\InputFilter();' . "\n";
         foreach($this->columns as $column){
+            if($column->field == 'created_at'||$column->field == 'updated_at'||$column->field == 'id'){
+                continue;
+            }
             $body .= $column->toInputFilter() . "\n";
         }
         $body .= '$this->inputFilter = $inputFilter;
