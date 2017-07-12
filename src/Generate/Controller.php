@@ -77,7 +77,95 @@ class Controller extends Base
         
         $new = $part1 . "\n            Controller" . $this->getFolderNamespace() . "\\" . $this->name . "Controller::class => InvokableFactory::class," . $part2;
         
-        file_put_contents('./module/'.$this->module.'/config/module.config.php', $new);
+        $init = stripos($new, "'router' => [");
+        $init = stripos($new, "'routes' => [", $init);
+        $part1 = substr($new, 0, $init+13);
+        $part2 = substr($new, $init+13);
+        
+        $new2 = $part1 . "\n            '".strtolower($this->name)."' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/".strtolower($this->name)."',
+                    'defaults' => [
+                        'controller' => Controller" . $this->getFolderNamespace() . "\\" . $this->name . "Controller::class,
+                        'action'     => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'list' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/list[/:page]',
+                            'defaults' => [
+                                'controller' => Controller" . $this->getFolderNamespace() . "\\" . $this->name . "Controller::class,
+                                'action'     => 'index',
+                                'page'       => 1
+                            ],
+                        ],
+                    ],
+                    'add' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/add',
+                            'defaults' => [
+                                'controller' => Controller" . $this->getFolderNamespace() . "\\" . $this->name . "Controller::class,
+                                'action'     => 'add',
+                            ],
+                        ],
+                    ],
+                    'edit' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/edit/:id',
+                            'defaults' => [
+                                'controller' => Controller" . $this->getFolderNamespace() . "\\" . $this->name . "Controller::class,
+                                'action'     => 'edit',
+                            ],
+                        ],
+                    ],
+                    'delete' => [
+                        'type'    => Segment::class,
+                        'options' => [
+                            'route'    => '/delete/:id',
+                            'defaults' => [
+                                'controller' => Controller" . $this->getFolderNamespace() . "\\" . $this->name . "Controller::class,
+                                'action'     => 'delete',
+                            ],
+                        ],
+                    ],
+                ]
+            ]," . $part2;
+        
+        $init = stripos($new2, "'authentication_acl' => [");
+        if($init === false){
+            $new3 = str_replace('];', "\n    'authentication_acl' => [
+        'resources' => [
+            Controller" . $this->getFolderNamespace() . "\\" . $this->name . "Controller::class => [
+                'actions' => [
+                    'index' => ['allow' => 'member'],
+                    'add' => ['allow' => 'member'],
+                    'edit' => ['allow' => 'member'],
+                    'delete' => ['allow' => 'member'],
+                ]
+            ],
+        ],
+    ],", $new2);
+        }else{
+            $init = stripos($new2, "'resources' => [", $init);
+            $part1 = substr($new2, 0, $init+16);
+            $part2 = substr($new2, $init+16);
+
+            $new3 = $part1 . "\n            Controller" . $this->getFolderNamespace() . "\\" . $this->name . "Controller::class => [
+                'actions' => [
+                    'index' => ['allow' => 'member'],
+                    'add' => ['allow' => 'member'],
+                    'edit' => ['allow' => 'member'],
+                    'delete' => ['allow' => 'member'],
+                ]
+            ]," . $part2;
+        }
+        
+        file_put_contents('./module/'.$this->module.'/config/module.config.php', $new3);
     }
     
     public function run()
