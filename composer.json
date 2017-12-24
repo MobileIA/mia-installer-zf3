@@ -1,7 +1,7 @@
 {
     "name": "mobileia/mia-installer-zf3",
     "description": "The library for Zend Framework 3",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "minimum-stability": "stable",
     "license": "MIT",
     "authors": [
@@ -31,5 +31,10 @@
         "classmap": [
             "./Module.php"
         ]
+    },
+    "extra": {
+        "zf": {
+            "component": "MIAInstaller"
+        }
     }
 }
