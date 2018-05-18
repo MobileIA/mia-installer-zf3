@@ -32,6 +32,29 @@ class Form extends Base
         $method->setBody($body);
         
         $this->class->addMethodFromGenerator($method);
+        $this->class->addMethodFromGenerator($this->methodAddInputFilter());
+    }
+    
+    protected function methodAddInputFilter()
+    {
+        $method = new \Zend\Code\Generator\MethodGenerator();
+        $method->setName('addInputFilter');
+        //$method->setReturnType('\Zend\InputFilter\InputFilterInterface');
+        $method->setVisibility(\Zend\Code\Generator\MethodGenerator::FLAG_PUBLIC);
+        
+        $body = '     
+$inputFilter = new \Zend\InputFilter\InputFilter();' . "\n";
+        foreach($this->columns as $column){
+            if($column->field == 'created_at'||$column->field == 'updated_at'||$column->field == 'id'){
+                continue;
+            }
+            $body .= $column->toInputFilter() . "\n";
+        }
+        $body .= '$this->setInputFilter($inputFilter);';
+        
+        $method->setBody($body);
+        
+        return $method;
     }
     
     protected function createClass()
