@@ -68,4 +68,79 @@ class AbstractController extends AbstractActionController
         $controller->setColumns($columns);
         $controller->run();
     }
+    
+    protected function createForDB($tables)
+    {
+        // Obtenemos el schema de la DB
+        $metadata = \Zend\Db\Metadata\Source\Factory::createSourceFromAdapter($this->getDBAdapter());
+        // Recorremos las tablas encontradas
+        foreach($metadata->getTableNames() as $tableName){
+            if(!in_array($tableName, $tables)){
+                continue;
+            }
+            $this->createForTable($metadata, $tableName);
+        }
+    }
+    /**
+     * 
+     * @param \Zend\Db\Metadata\MetadataInterface $metadata
+     * @param type $tableName
+     */
+    protected function createForTable($metadata, $tableName)
+    {
+        // Obtenemos tabla
+        $table = $metadata->getTable($tableName);
+        // Array para guardar los campos
+        $fields = array();
+        // recorremos las columnas
+        foreach($table->getColumns() as $column){
+            $field = $this->generateColumn($column);
+            if($field === null){
+                continue;
+            }
+            $fields[] = $field;
+        }
+        // Crear entidad
+        $nameEntity = str_replace(' ', '', ucwords(str_replace('_', ' ', $tableName)));
+        $this->createEntity($nameEntity, 'Application', $fields);
+        $this->createTable($nameEntity, 'Application', $fields);
+    }
+    /**
+     * Convierte una Columna Metadata en Field
+     * @param \Zend\Db\Metadata\Object\ColumnObject $column
+     * @return \MIAInstaller\Generate\Field\Base
+     */
+    protected function generateColumn($column)
+    {
+        if($column->getName() == 'id'){
+            return new \MIAInstaller\Generate\Field\Id();
+        }else if($column->getName() == 'created_at'){
+            return null;
+        }else if($column->getName() == 'updated_at'){
+            return null;
+        }else if($column->getName() == 'deleted'){
+            return null;
+        }else if($column->getDataType() == 'bigint'){
+            return new \MIAInstaller\Generate\Field\Integer(ucwords(str_replace('_', ' ', $column->getName())), $column->getName());
+        }else if($column->getDataType() == 'int'){
+            return new \MIAInstaller\Generate\Field\Integer(ucwords(str_replace('_', ' ', $column->getName())), $column->getName());
+        }else if($column->getDataType() == 'float'||$column->getDataType() == 'decimal'){
+            return new \MIAInstaller\Generate\Field\Double(ucwords(str_replace('_', ' ', $column->getName())), $column->getName());
+        }else if($column->getDataType() == 'varchar'){
+            return new \MIAInstaller\Generate\Field\StringF(ucwords(str_replace('_', ' ', $column->getName())), $column->getName());
+        }else if($column->getDataType() == 'text'){
+            return new \MIAInstaller\Generate\Field\Text(ucwords(str_replace('_', ' ', $column->getName())), $column->getName());
+        }else if($column->getDataType() == 'datetime'||$column->getDataType() == 'date'){
+            return new \MIAInstaller\Generate\Field\Datetime(ucwords(str_replace('_', ' ', $column->getName())), $column->getName());
+        }
+        throw new Exception("Tipo no valido.");
+    }
+    /**
+     * 
+     * @return Adapter
+     */
+    public function getDBAdapter()
+    {
+        return $this->getEvent()->getApplication()->getServiceManager()->get('Zend\Db\Adapter\Adapter');
+    }
 }
