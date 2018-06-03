@@ -106,6 +106,29 @@ class AbstractController extends AbstractActionController
         $this->createTable($nameEntity, 'Application', $fields);
     }
     /**
+     * Devuelve un array con las columnas obtenidas de la DB
+     * @param string $tableName
+     * @return array
+     */
+    protected function getColumnsByDB($tableName)
+    {
+        // Obtenemos el schema de la DB
+        $metadata = \Zend\Db\Metadata\Source\Factory::createSourceFromAdapter($this->getDBAdapter());
+        // Obtenemos tabla
+        $table = $metadata->getTable($tableName);
+        // Array para guardar los campos
+        $fields = array();
+        // recorremos las columnas
+        foreach($table->getColumns() as $column){
+            $field = $this->generateColumn($column);
+            if($field === null){
+                continue;
+            }
+            $fields[] = $field;
+        }
+        return $fields;
+    }
+    /**
      * Convierte una Columna Metadata en Field
      * @param \Zend\Db\Metadata\Object\ColumnObject $column
      * @return \MIAInstaller\Generate\Field\Base
